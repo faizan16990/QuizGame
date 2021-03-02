@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Quiz Game</title>
+</head>
+<body>
+    <div class="home-box custom-box  ">
+        <h3>Instruction</h3>
+        <p>Total number of questions: <span class="total-question">5</span></p>
+        <button type="button" class="btn" onclick="startQuiz()">Start Quiz</button>
+    </div>
+
+    <div class="quiz-box custom-box hide " >
+        <div class="question-number">
+
+        </div>
+        <div class="question-text"></div>
+        <div class="option-container">
+            
+        </div>
+        <div class="next-question-btn">
+            <button type="button" class="btn" onclick="next()">Next</button>
+        </div>
+        <div class="answers-indicator">
+           
+        </div>
+    </div>
+    <div class="result-box custom-box hide">
+        <h1>Quiz Result</h1>
+        <table>
+            <tr>
+                <td>Total Questions</td>
+                <td><span class="total-question"></span></td>
+            </tr>
+            <tr>
+                <td>Attempt</td>
+                <td><span class="total-attempt"></span></td>
+            </tr>
+            <tr>
+                <td>Correct </td>
+                <td><span class="total-correct"></span></td>
+            </tr>
+            <tr>
+                <td>Wrong </td>
+                <td><span class="total-wrong"></span></td>
+            </tr>
+            <tr>
+                <td>Percentage</td>
+                <td><span class="Percentage"></span></td>
+            </tr>
+            <tr>
+                <td>Your Total Score</td>
+                <td><span class="total-score"></span></td>
+            </tr>
+        </table>
+        <button type="button" class="btn" onclick="tryAgainQuiz()">Try Again</button>
+        <button type="button" class="btn" onclick="goToHome()">Go To Home</button>
+    </div>
+    <footer>
+        <div class="center">Developed by MOHD FAIZAN <br>
+            Copyright © www.MyFirstGame.com All right reserved</div>
+    </footer>
+    <script>const quiz = [
+        {
+            q: 'which month comes before june?',
+            options: ['may', 'september', 'july', 'August'],
+            answer: 0
+        },
+        {
+            q: 'which one is longest river in the world?',
+            options: ['River nile', 'Amazon', 'Yangtze', 'Amur'],
+            answer: 0
+        },
+        {
+            q: 'Which one is the first search engin in internet ?',
+            options: ['Google', 'Archie','Altavista','WAIS'],
+            answer: 1
+        },
+        {
+            q: 'Number of bit used by the IPv6 address?',
+            options : ['64bit', '32 bit', '128 bit','256 bit'],
+            answer: 2
+        },
+        {
+            q: 'What is the indigenous WhatsAAP alternative launched recently ?',
+            options: ['Koo App', 'Sandes App', 'KiK app', 'Keybase App'],
+            answer: 1
+        },
+        {
+            q: 'first computer virus is know as?',
+            options : ['Rabbit', 'Eik cloner', 'SCA virus','Creepervirus'],
+            answer: 3
+        },
+        {
+            q: 'What is position of india in corruption perceptions in 2020?',
+            options : ['99th', '80th', '86th','72nd'],
+            answer: 2
+        },
+        {
+            q: 'Union budget of 2020 announced?',
+            options : ['26jan', '1 feb', '5 feb','15 feb'],
+            answer: 1
+        },
+        {
+            q: 'president of india?',
+            options : ['savita kovind', 'Narendra modi', 'Ram nath Kovind','Swati  kovind'],
+            answer: 2
+        },
+        {
+            q: 'Most hansome man in 2020?',
+            options : ['V(kim Tae-hyung)', 'Tom Cruise', 'Chris Evans','Hrithik Roshan'],
+            answer: 0
+        }
+]
+    
+    
+const questionNumber = document.querySelector(".question-number");
+const questionText = document.querySelector(".question-text");
+const optionContainer = document.querySelector(".option-container");
+const answersIndicatorContainer = document.querySelector(".answers-indicator");
+const homeBox = document.querySelector(".home-box");
+const quizBox = document.querySelector(".quiz-box");
+const resultBox = document.querySelector(".result-box");
+
+let questionCounter = 0;
+let currentQuestion;
+let availableQuestions = [];
+let availableOptions = [];
+let correctAnswers = 0;
+let attempt = 0;
+
+//push the question into availableQuestion
+
+function setAvailableQuestions() {
+    const totalQuestion = quiz.length;
+    for (let i = 0; i < totalQuestion; i++) {
+        availableQuestions.push(quiz[i])
+    }
+}
+
+
+function getNewQuestion() {
+    //set question number
+    questionNumber.innerHTML = "Question " + (questionCounter + 1) + "of" + quiz.length;
+    //set question text
+    // get random question
+    const questionIndex = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
+    currentQuestion = questionIndex;
+    questionText.innerHTML = currentQuestion.q;
+    //get the position of questionindex from the availableQuestion Array
+    const index1 = availableQuestions.indexOf(questionIndex);
+    //remove the questionIndex from the availableQuestion Array ,so that question does not repeat
+    availableQuestions.splice(index1, 1);
+    //set options
+    // get the length of option
+    const optionLen = currentQuestion.options.length
+    // push options into availableQuestion Array
+    for (let i = 0; i < optionLen; i++) {
+        availableOptions.push(i)
+    }
+
+    optionContainer.innerHTML = '';
+    let animationDelay = 0.15;
+    //create options in inner html
+    for (let i = 0; i < optionLen; i++) {
+        //random option
+        const optonIndex = availableOptions[Math.floor(Math.random() * availableOptions.length)];
+        // get the positin of optonIndex from the avaibleoptions
+        const index2 = availableOptions.indexOf(optonIndex);
+
+        //remove the  optionIndex fromthe availabeoptions so that option does not repeat
+        availableOptions.splice(index2, 1);
+        const option = document.createElement("div");
+        option.innerHTML = currentQuestion.options[optonIndex];
+        option.id = optonIndex;
+        option.style.animationDelay = animationDelay + 's';
+        animationDelay = animationDelay + 0.15;
+        option.className = "option";
+        optionContainer.appendChild(option)
+        option.setAttribute("onclick", "getResult(this)");
+
+    }
+
+    questionCounter++
+}
+
+//get the result of curreny attempt
+function getResult(element) {
+    const id = parseInt(element.id);
+    //get the answer by comparing the id of clicked option
+    if (id === currentQuestion.answer) {
+        //set the green color to correct option
+        element.classList.add("correct");
+        //update the indicator to correct mark
+        updateAnswerIndicator("correct");
+        correctAnswers++;
+        
+    }
+    else {
+        element.classList.add("wrong");
+        //ad the mark wrong
+        updateAnswerIndicator("wrong");
+
+
+        const optionLen = optionContainer.children.length;
+        for (let i = 0; i < optionLen; i++) {
+            if (parseInt(optionContainer.children[i].id) === currentQuestion.answer) {
+                optionContainer.children[i].classList.add("correct");
+            }
+        }
+    }
+    attempt++;
+    unclickableOptions();
+}
+
+//make all the option 
+function unclickableOptions() {
+    const optionLen = optionContainer.children.length;
+    for (let i = 0; i < optionLen; i++) {
+        optionContainer.children[i].classList.add("already-answered");
+    }
+}
+
+function answersIndicator() {
+    answersIndicatorContainer.innerHTML = '';
+    const totalQuestion = quiz.length;
+    for (let i = 0; i < totalQuestion; i++) {
+        const indicator = document.createElement("div");
+        answersIndicatorContainer.appendChild(indicator);
+    }
+}
+function updateAnswerIndicator(markType) {
+    answersIndicatorContainer.children[questionCounter-1].classList.add(markType)
+}
+
+function next() {
+    if (questionCounter === quiz.length) {
+        quizOver();
+    }
+    else {
+        getNewQuestion();
+        
+    }
+}
+
+function quizOver() {
+    quizBox.classList.add("hide");
+   resultBox.classList.remove("hide");
+   quizResult();
+
+}
+
+//get quiz result 
+function quizResult() {
+    resultBox.querySelector(".total-question").innerHTML = quiz.length;
+    resultBox.querySelector(".total-attempt").innerHTML = attempt;
+    resultBox.querySelector(".total-correct").innerHTML = correctAnswers;
+    resultBox.querySelector(".total-wrong").innerHTML = attempt - correctAnswers;
+    const percentage = (correctAnswers / quiz.length) * 100;
+    resultBox.querySelector(".Percentage").innerHTML = percentage.toFixed(2) + "%";
+    resultBox.querySelector(".total-score").innerHTML = correctAnswers + " / " + quiz.length;
+}
+
+function resetQuiz(){
+    questionCounter = 0;
+    correctAnswers = 0;
+    attempt =0;
+}
+function tryAgainQuiz(){
+    resultBox.classList.add("hide");
+    quizBox.classList.remove("hide");
+    resetQuiz();
+    startQuiz();
+}
+function goToHome(){
+    resultBox.classList.add("hide");
+    homeBox.classList.remove("hide");
+    resetQuiz();
+}
+
+
+
+
+
+//######STARTING PINT#######
+
+function startQuiz (){
+    //hide home box
+    homeBox.classList.add("hide");
+    quizBox.classList.remove("hide");
+    //first we will set all questions in available Array
+    setAvailableQuestions();
+    //second we will call getNewQuestion(); function
+    getNewQuestion();
+    // to create indicator of answers
+    answersIndicator();
+
+}
+
+    
+    
+    
+    
+    
+    
+    
+    </script>
+
+</body>
+</html>
